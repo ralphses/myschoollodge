@@ -1,0 +1,16 @@
+{
+    "name": "ralphses/campgist",
+    "autoload": {
+        "psr-4": {
+            "Ralphses\\Campgist\\": "src/",
+            "src\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ralphses",
+            "email": "eze.raph@gmail.com"
+        }
+    ],
+    "require": {}
+}
