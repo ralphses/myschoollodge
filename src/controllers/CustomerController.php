@@ -10,6 +10,7 @@ use src\models\ModelDAO\PropertyDAO;
 use src\utils\Application;
 use src\utils\Request;
 use src\utils\Response;
+use src\models\Model;
 
 class CustomerController extends Controller {
 
@@ -24,6 +25,9 @@ class CustomerController extends Controller {
         $this->response = new Response();
 
     }
+
+    public function prepareModel($modelID): array {return [];}
+    public function cleanModel(Model $model): array {return [];}
 
     public function newCustomer(Request $request) {
 

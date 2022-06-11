@@ -29,6 +29,7 @@ class Property extends Model {
     public string $propertyDescription;
     public string $propertyTimeToGetToSchool;
     public string $propertyState;
+    public string $userAgree ='';
 
     //Facilities found in this property
     public array $facilities;
@@ -45,7 +46,8 @@ class Property extends Model {
         'propertyAddressLine' => [self::RULE_REQUIRED],
         'propertyLocationCity' => [self::RULE_REQUIRED],
         'propertyLocationState' => [self::RULE_REQUIRED],
-        'propertyState' => [self::RULE_REQUIRED]
+        'propertyState' => [self::RULE_REQUIRED],
+        'userAgree' => [self::RULE_REQUIRED]
 
     ];
 
@@ -57,7 +59,8 @@ class Property extends Model {
         'propertyAddressLine' => 'Address line',
         'propertyLocationCity' => 'City',
         'propertyLocationState' => 'State',
-        'propertyState' => 'Lodge status'
+        'propertyState' => 'Lodge status',
+        'userAgree' => 'Agreement to T&C'
 
     ];
 

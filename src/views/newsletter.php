@@ -1,5 +1,5 @@
   <!-- News Letter section start -->
-  <section class="pt-[80px] lg:pt-[120px]">
+  <section class="pt-[80px] lg:pt-[120px]" id="newsletter">
             <div class="container">
                 <div class="grid grid-cols-1">
                     <div class="col-span">

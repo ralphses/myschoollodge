@@ -25,14 +25,20 @@ $application->getRouter()->get('/new-agent', [SiteController::class, 'newAgent']
 $application->getRouter()->get('/login', [SiteController::class, 'login']);
 $application->getRouter()->get('/reset-password', [SiteController::class, 'resetPass']);
 $application->getRouter()->get('/new-password', [SiteController::class, 'anotherPassword']);
+$application->getRouter()->get('/modify-agent', [SiteController::class, 'editAgent']);
 $application->getRouter()->get('/properties-details', [SiteController::class, 'showPropertied']);
+$application->getRouter()->get('/user-add-lodge', [SiteController::class, 'userNewLodge']);
 $application->getRouter()->get('/search-lodge', [SearchController::class, 'searchAll']);
+$application->getRouter()->get('/user', [SiteController::class, 'userHome']);
+$application->getRouter()->get('/user-requests', [SiteController::class, 'userRequests']);
+$application->getRouter()->get('/view-lodges', [SiteController::class, 'seeUserLodge']);
 
-$application->getRouter()->post('/new-agent', [AgentController::class, 'newAgent']);
+$application->getRouter()->post('/modify-agent', [AgentController::class, 'editAgent']);
 
 $application->getRouter()->post('/new-agency', [AgencyController::class, 'newAgency']);
 
 $application->getRouter()->post('/add-property', [PropertyController::class, 'newLodge']);
+$application->getRouter()->post('/delete-property', [PropertyController::class, 'deleteLodge']);
 
 $application->getRouter()->post('/new-customer', [CustomerController::class, 'newCustomer']);
 

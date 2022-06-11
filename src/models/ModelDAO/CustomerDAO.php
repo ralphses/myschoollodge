@@ -43,4 +43,24 @@ class CustomerDAO extends ModelDAO {
         return self::getConnection()->executeQuery($sql, $this->modelBody)['count'];
     }
 
+    public static function deleteCustomerRequestProperty($propertyID) {
+
+        $sql = "DELETE FROM `customer_request` WHERE property_id = :property_id;";
+        $body = ['property_id' => $propertyID];
+
+        return self::getConnection()->executeQuery($sql, $body)['count'];
+    }
+
+    public static function changeCustomerRequestStatus(int $prop_status, $params) {
+        
+        $sql = "UPDATE `customer_request` SET `status`= :status WHERE $params[0] = :$params[0];";
+        $body = [
+            'status' => $prop_status,
+            "$params[0]" => $params[1]
+        ];
+
+        return self::getConnection()->executeQuery($sql, $body)['count'];
+
+    }
+
 }

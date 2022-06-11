@@ -24,7 +24,7 @@ class ImageHandler {
         $images = [];
         $allImagePaths = [];
         //return an array of image paths here
-        if($_FILES[$imageName]) {
+        if($_FILES[$imageName]['tmp_name'][0] != '') {
             foreach($_FILES[$imageName]['name'] as $key => $value ) {
                 $images[$_FILES[$imageName]['tmp_name'][$key]] = $value;
             }
@@ -43,8 +43,9 @@ class ImageHandler {
         return $allImagePaths;
     }
 
-    public function deleteImage($imageName) {
-        if(file_exists($imageName) and unlink($imageName)) {
+    public static function deleteImagePath($imageName) {
+        // var_dump($imageName); exit;
+        if($imageName != '' and file_exists($imageName) and unlink($imageName)) {
             return true;
         }
     }

@@ -15,30 +15,28 @@ class AgencyDAO extends ModelDAO {
 
     public function saveBasicAgency($agencyBasicDetails) {
 
-        $sql = 'INSERT INTO `agency`(`agency_name`, `agency_phone`, `agency_email`, `password`, `location_id`, `rating_id`) 
-                VALUES (:agency_name, :agency_phone, :agency_email, :password, :location_id, :rating_id);';
+        $sql = 'INSERT INTO `agency`(`agency_name`, `agency_phone`, `agency_email`, `location_id`, `rating_id`) 
+                VALUES (:agency_name, :agency_phone, :agency_email, :location_id, :rating_id);';
         
         $body = [
             'agency_name' => $this->model->name, 
             'agency_phone' => $this->model->phone,
             'agency_email' => $this->model->email,
-            'password' => $this->model->agency_password
         ];
 
         $body = array_merge($agencyBasicDetails, $body);
-        $body['password'] = password_hash($body['password'], PASSWORD_DEFAULT);
 
         return self::getConnection()->executeQuery($sql, $body)['count'];
     }
 
     public function saveAgencyImages() {
 
-        $sql = 'INSERT INTO `agency_image`(`agency_id`, `img`, `img_type`) 
-                VALUES (:agency_id, :img, :img_type);';
+        $sql = 'INSERT INTO `images`(`id`, `imageURL`, `image_type`) 
+                VALUES (:id, :imageURL, :image_type);';
 
         $body = [];
 
-        $body['agency_id'] = self::getLastInsertedModel('agency', 'agency_id')[0]['agency_id'];
+        $body['id'] = self::getLastInsertedModel('agency', 'agency_id')[0]['agency_id'];
 
         $images = [];
         $images['Cover image'] = $this->imageHandler->getSingleImage('cover_image', 'agency') ?? false;
@@ -47,8 +45,8 @@ class AgencyDAO extends ModelDAO {
         foreach($images as $key => $value) {
             if($value) {
 
-                $body['img'] = $value;
-                $body['img_type'] = $key;
+                $body['imageURL'] = $value;
+                $body['image_type'] = $key;
 
                 self::getConnection()->executeQuery($sql, $body)['count'];
             }
@@ -66,7 +64,7 @@ class AgencyDAO extends ModelDAO {
         return self::getConnection()->executeQuery($sql, $body)['count'];
     }
 
-    public function saveCertificationDetails() {
+    public function saveAgencyCertificationDetails() {
 
         $sql = 'INSERT INTO `certification_details`(`agency_id`, `c_firm`, `c_no`) 
                 VALUES (:agency_id, :c_firm, :c_no);';
@@ -75,6 +73,13 @@ class AgencyDAO extends ModelDAO {
         $body['agency_id'] = self::getLastInsertedModel('agency', 'agency_id')[0]['agency_id'];
 
         return self::getConnection()->executeQuery($sql, $body)['count'];
+    }
+
+    public static function getAgencyByName($agency_title) {
+        $sql = "SELECT * FROM agency WHERE agency_name = :agency_name";
+        $body = ['agency_name' => $agency_title];
+
+        return self::getConnection()->executeQuery($sql, $body)['data'] ?? false;
     }
 
 }

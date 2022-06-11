@@ -5,10 +5,10 @@ namespace src\models;
 class Agent extends Model{
 
     public string $agent_name;
-    public string $username;
     public string $agent_email;
     public string $agent_phone;
-    public string $agency_id;
+    public string $agency;
+    public string $agent_agency_role;
     public string $agent_address;
     public string $agent_password;
     public string $agent_confirm_password;

@@ -68,17 +68,24 @@ $agent = $_SESSION['agent'] ?? false;
                             </a>
                             <nav class="flex flex-wrap items-center">
                                 <ul class="hidden lg:flex flex-wrap items-center font-recoleta text-[16px] xl:text-[18px] leading-none text-black">
-                                    <li class="mr-7 xl:mr-[40px] relative group py-[20px]">
+                                    
+                                    <?php 
+                                         if($logged_in) { 
+                                             echo '<li class="mr-7 xl:mr-[40px] relative group py-[20px]">
+                                             <a href="/user" class="transition-all hover:text-secondary">Dashboard</a>
+                                         </li>';
+                                         }
+                                         else {
+                                             echo '<li class="mr-7 xl:mr-[40px] relative group py-[20px]">
+                                             <a href="/" class="transition-all hover:text-secondary">Home</a>
+                                         </li>';
+                                         echo '<li class="mr-7 xl:mr-[40px] relative group py-[20px]">
+                                         <a href="/about" class="transition-all hover:text-secondary">About</a>
+                                     </li>';
+                                         }
+                                    ?>
 
-                                        <a href="/" class="transition-all hover:text-secondary">Home</a>
-
-                                      
-                                    </li>
-                                    <li class="mr-7 xl:mr-[40px] relative group py-[20px]">
-
-                                        <a href="/about" class="transition-all hover:text-secondary">About</a>
-
-                                    </li>
+                                    
                                     <li class="mr-7 xl:mr-[40px] relative group py-[20px]">
                                         <a href="/properties" class="transition-all hover:text-secondary"><?php echo ($logged_in and $agent) ? 'My Apartments' : 'Apartments' ?></a>
                                     </li>
@@ -139,6 +146,9 @@ $agent = $_SESSION['agent'] ?? false;
                                                 echo '<li class="border-b border-dashed border-primary border-opacity-40 last:border-b-0 hover:border-solid transition-all">
                                                     <span id="logout-btn" class="font-recoleta leading-[1.571] text-[14px] text-primary p-[10px] capitalize block transition-all hover:bg-primary hover:text-white text-center my-[-1px] rounded-t-[12px]">Logout</span>
                                                 </li>';
+                                                echo '<li class="border-b border-dashed border-primary border-opacity-40 last:border-b-0 hover:border-solid transition-all">
+                                                <a href="/modify-agent" id="profile-btn" class="font-recoleta leading-[1.571] text-[14px] text-primary p-[10px] capitalize block transition-all hover:bg-primary hover:text-white text-center my-[-1px] rounded-t-[12px]">My Profile</a>
+                                            </li>';
                                             }
                                             ?>
 

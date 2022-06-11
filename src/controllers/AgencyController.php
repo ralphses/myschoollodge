@@ -5,6 +5,8 @@ namespace src\controllers;
 use src\models\Agency;
 use src\models\Model;
 use src\models\ModelDAO\AgencyDAO;
+use src\models\ModelDAO\AgentDAO;
+use src\models\ModelDAO\ModelDAO;
 use src\utils\Application;
 use src\utils\ImageHandler;
 use src\utils\Location;
@@ -24,6 +26,9 @@ class AgencyController extends Controller {
         $this->imageHandler = new ImageHandler();
 
     }
+
+    public function prepareModel($modelID): array {return [];}
+    public function cleanModel(Model $model): array {return [];}
 
     public function newAgency(Request $request) {
 
@@ -54,6 +59,14 @@ class AgencyController extends Controller {
 
         }
 
+        //Check if an agency with this name already existed
+        if($this->agencyDAO->getAgencyByName($this->model->name)) {
+
+            $this->response->setResponseContent(['name' => 'Agency with title '. $this->model->name. " already exists!"]);
+            echo json_encode(['status' => false, 'response' => $this->response->getResponseContent()]);
+            exit;
+        }
+
         if(!$this->model->validate()) {
 
             $this->response->setResponseContent($this->model->errors);
@@ -78,8 +91,12 @@ class AgencyController extends Controller {
 
         //Save Certification details 
         if($body['certification_status'] === '1') {
-            $this->agencyDAO->saveCertificationDetails();
+            $this->agencyDAO->saveAgencyCertificationDetails();
         }
+
+        //Tie this agency to the agent
+        $thisAgencyID = ModelDAO::getLastInsertedModel('agency', 'agency_id')[0]['agency_id'];
+        AgentDAO::saveAgentAgency($thisAgencyID, $_SESSION['agent']);
                
     }
 

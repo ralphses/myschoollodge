@@ -48,18 +48,6 @@
                             <p class="error" id="phone"></p>
                         </div>
 
-                        <div class="mb-[45px] col-span-12 md:col-span-6">
-                            <label class="mb-[20px] font-recoleta text-[18px] leading-none block text-primary" for="property-title">New password</label>
-                            <input name="agency_password" class="font-light w-full leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] h-[60px] " type="password" placeholder="not less than 8 characters">
-                            <p class="error" id="agency_password"></p>
-                        </div>
-
-                        <div class="mb-[45px] col-span-12 md:col-span-6">   
-                            <label class="mb-[20px] font-recoleta text-[18px] leading-none block text-primary" for="property-title">Confirm password</label>
-                            <input name="confirm_agency_password" class="font-light w-full leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] h-[60px] " type="password" placeholder="same as password">
-                            <p class="error" id="confirm_agency_password"></p>
-                        </div>
-
                         <div class="mb-[45px] col-span-12">
                             <label class="mb-[20px] font-recoleta text-[18px] leading-none block text-primary" for="textarea">Description</label>
                             <textarea name="description" id="description" class="h-[196px] xl:h-[260px] font-light w-full leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] resize-none" cols="30" rows="5" placeholder="Briefly describe your agency"></textarea>

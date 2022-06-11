@@ -5,6 +5,7 @@ namespace src\utils;
 use src\controllers\Controller;
 use src\models\ModelDAO\AgentDAO;
 use src\models\ModelDAO\UtilDAO;
+use src\models\Model;
 
 class LoginLogout extends Controller {
 
@@ -12,6 +13,9 @@ class LoginLogout extends Controller {
 	public const MAX_EMAIL_VERIFICATION_REQUESTS_PER_DAY = 3;
 	public const MAX_PASSWORD_RESET_REQUESTS_PER_DAY = 3;
 	public const PASSWORD_RESET_REQUEST_EXPIRY_TIME = (60*60);
+
+    public function prepareModel($modelID): array {return [];}
+    public function cleanModel(Model $model): array {return [];}
 
     public static function logingNewUser(Request $request) {
 
@@ -28,13 +32,18 @@ class LoginLogout extends Controller {
         $userName = $request->getFormInputs()['email_address'] ?? false;
         $password = $request->getFormInputs()['agent_password'] ?? false;
 
-        //Unlock if more than 24 hours
-        $lastLoginTime = date('Y-m-d H:m:s', strtotime(UtilDAO::getlastLoginTime($userName)));
-        $thisTime = date('Y-m-d H:m:s', strtotime( '+1hour', strtotime(UtilDAO::getlastLoginTime($userName))));
-    
-        if($lastLoginTime > $thisTime and intval(UtilDAO::getNoOfLogins($userName)) < 10) {
-            UtilDAO::clearLogins($userName);
-        }
+        // echo $userName, $password; exit;
+
+        // Unlock if more than 24 hours
+       if(UtilDAO::getNoOfLogins($userName) > 0) {
+
+            $lastLoginTime = date('Y-m-d H:m:s', strtotime(UtilDAO::getlastLoginTime($userName)));
+            $thisTime = date('Y-m-d H:m:s', strtotime( '+1hour', strtotime(UtilDAO::getlastLoginTime($userName))));
+        
+            if($lastLoginTime > $thisTime and intval(UtilDAO::getNoOfLogins($userName)) < 10) {
+                UtilDAO::clearLogins($userName);
+            }
+       }
 
         if(!($userName and $password)) {
             echo json_encode(['response' => 'Invalid login details, please check']);
@@ -53,17 +62,16 @@ class LoginLogout extends Controller {
 
         $agent = AgentDAO::getAgentByEmail($userName);
 
+
         if($agent and password_verify($password, $agent[0]['password'])) {
 
             session_regenerate_id(true); //create a new session id
             $_SESSION['logged_in'] = true;
             $_SESSION['agent'] = $agent[0]['agent_id'];
-            $_SESSION['agent_image'] = $agent[0]['image'];
-
-            echo json_encode(['status' => true, 'response' => 'Invalid login details, please check']);
-            exit;
 
             UtilDAO::clearLogins($userName);
+            echo json_encode(['status' => true, 'response' => 'Invalid login details, please check']);
+            exit;
 
         }
         else {

@@ -16,6 +16,8 @@ abstract class Model {
     public const RULE_MIN = 'min';
     public const RULE_MATCH = 'match';
     public const RULE_PASSWORD = 'password';
+    public const RULE_CHECKED = 'checked';
+
 
     /**
      * Abstract methods to be defined by child classes
@@ -48,7 +50,8 @@ abstract class Model {
             self::RULE_MIN => '{attribute} length must not be less than {min}',
             self::RULE_PHONE_NUMBER => '{attribute} must be a valid Nigerian phone number',
             self::RULE_REQUIRED => '{attribute} is required',
-            self::RULE_PASSWORD => '{attribute} must contain at least a lower and an upper case and a number'
+            self::RULE_PASSWORD => '{attribute} must contain at least a lower and an upper case and a number',
+            self::RULE_CHECKED => '{attribute} must be checked',
           ];
       }
 
@@ -90,6 +93,9 @@ abstract class Model {
                 }
 
                 //Make real validations
+                if($ruleName === self::RULE_CHECKED and $value == '') {
+                    $this->addError($attribute, self::RULE_CHECKED);
+                } 
                 if($ruleName === self::RULE_EMAIL and !filter_var($value, FILTER_SANITIZE_EMAIL)){
                     $this->addError($attribute, self::RULE_EMAIL);
                 }
@@ -117,6 +123,7 @@ abstract class Model {
                 if($ruleName === self::RULE_PASSWORD and !preg_match('@[0-9]@', $value) and !preg_match('@[A-Z]@', $value) and !preg_match('@[a-z]@', $value)) {
                     $this->addError($attribute, self::RULE_PASSWORD);
                 }
+                
                 
 
             }

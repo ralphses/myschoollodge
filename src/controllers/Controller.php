@@ -8,7 +8,7 @@ use src\utils\Application;
 use src\utils\ImageHandler;
 use src\utils\Response;
 
-class Controller {
+abstract class Controller {
 
     public string $layout;
     
@@ -21,6 +21,9 @@ class Controller {
     public function __construct() {
         Application::$application->setController($this);
     }
+
+    public abstract function prepareModel($modelID): array;
+    public abstract function cleanModel(Model $model): array;
 
     public function setLayout($layout) {
         $this->layout = $layout;

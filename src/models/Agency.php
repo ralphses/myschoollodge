@@ -7,8 +7,6 @@ class Agency extends Model {
     public string $name;
     public string $phone;
     public string $email;
-    public string $agency_password;
-    public string $confirm_agency_password;
     public string $description;
     public string $speciality;
     public string $certification_status;
@@ -27,8 +25,6 @@ class Agency extends Model {
         'name' => [self::RULE_REQUIRED],
         'phone' => [self::RULE_REQUIRED, self::RULE_PHONE_NUMBER],
         'email' => [self::RULE_REQUIRED, self::RULE_EMAIL],
-        'agency_password' => [self::RULE_REQUIRED, self::RULE_PASSWORD, [self::RULE_MIN, 'min' => 8]],
-        'confirm_agency_password' => [self::RULE_REQUIRED, [self::RULE_MATCH, 'match' => 'agency_password']],
         'certification_status' => [self::RULE_REQUIRED],
         'address_line' => [self::RULE_REQUIRED],
         'city' => [self::RULE_REQUIRED],
@@ -40,8 +36,6 @@ class Agency extends Model {
         'name' => 'Agency title',
         'phone' => 'Phone number',
         'email' => 'Email address',
-        'agency_password' => 'Password',
-        'confirm_agency_password' => 'Confirm password',
         'certification_status' => 'Certification status',
         'address_line' => 'Address line',
         'city' => 'Office location city',
