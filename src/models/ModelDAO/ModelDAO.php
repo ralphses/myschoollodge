@@ -26,4 +26,47 @@ class ModelDAO {
         return self::getConnection()->executeQuery($sql)['data'];
     }
 
+    public static function saveModelImage($modelID, $imageURL, $imageType, $model) {
+        $sql = 'INSERT INTO `images`(`id`, `imageURL`, `image_type`, `model`) 
+                VALUES (:id, :imageURL, :image_type, :model);';
+        $body = [
+            'id' => $modelID,
+            'imageURL' => $imageURL,
+            'image_type' => $imageType,
+            'model' => $model
+        ];
+
+        return self::getConnection()->executeQuery($sql, $body)['count'];
+    }
+
+    public static function updateModelImage($modelID, $imageURL, $imageType, $model) {
+        $sql = 'UPDATE `images` 
+                SET `imageURL` = :imageURL, `image_type` =:image_type, `model` = :model 
+                WHERE `id` = :id;';
+
+        $body = [
+            'id' => $modelID,
+            'imageURL' => $imageURL,
+            'image_type' => $imageType,
+            'model' => $model
+        ];
+
+        return self::getConnection()->executeQuery($sql, $body)['count'];
+    }
+
+    public static function getModelImage($modelID, $imageType, $model) {
+        
+        $sql = 'SELECT `imageURL` FROM `images` 
+                WHERE images.id = :id 
+                AND images.image_type = :image_type 
+                AND images.model = :model;';
+
+        $body = [
+            'id' => $modelID,
+            'image_type' => $imageType,
+            'model' => $model
+        ];
+
+        return self::getConnection()->executeQuery($sql, $body)['count'];
+    }
 }

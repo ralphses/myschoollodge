@@ -13,7 +13,7 @@ if(deletePropBtn) {
     
    deletePropBtn.forEach(btn => {
         btn.addEventListener('click', () => {
-            Swal.fire({ icon: "question", title: "Question", showCancelButton: true});
+            Swal.fire({ icon: "question", title: "Delete Lodge", showCancelButton: true});
             document.querySelector('.swal2-confirm').addEventListener('click', () => {
                let form = new FormData();
                form.append('prop_code', btn.dataset.code);
@@ -57,10 +57,30 @@ if(newAgentForm) {
         let xhr = new XMLHttpRequest();
         xhr.open('POST', newAgentForm.getAttribute('action'), true);
 
+
         xhr.addEventListener('readystatechange', () => {
+
+          
             if(xhr.readyState === 4) {
                 console.log(xhr.response)
-                // handleAgencyResponse(JSON.parse(xhr.response));
+                const data = JSON.parse(xhr.response);
+                if(!data['status']) {
+
+                    Object.entries(data['response'][0]).forEach(([key, value]) => {
+                        // console.log(key);
+                        document.querySelector(`#${key}`).textContent = value[0];
+                    });
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Something went wrong',
+                        text: 'Check required input fields',
+                      });
+                }
+                else {
+                    Swal.fire({ icon: "success", title: "Registration Successful", text: "Proceed to Login"});
+                    document.querySelector('.swal2-confirm').addEventListener('click', () => window.location.href = '/login');
+                }
+              
             }
         });
         xhr.send(agentForm);
@@ -114,7 +134,7 @@ if(addLodgeBtn) {
                 // console.log(xhr.response)
                 if(JSON.parse(xhr.response)['status']) {
                     Swal.fire({ icon: "success", title: "Success"});
-                    document.querySelector('.swal2-confirm').addEventListener('click', () => window.location.href = '/user');
+                    document.querySelector('.swal2-confirm').addEventListener('click', () => window.location.href = '/view-lodges');
                 }
                 else {
                     let data = JSON.parse(xhr.response)['response'];

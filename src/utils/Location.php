@@ -13,6 +13,13 @@ class Location {
     private string $nearest_bustop = '';
     private string $area;
 
+    public const STATES = [
+
+        'Abia',
+        'Adamawa',
+        'Akwa Ibom'
+    ];
+
     private function __construct(string $address_line, string $city, string $state, string $nearest_bustop, string $area) {
 
         $this->address_line = $address_line;
@@ -51,6 +58,20 @@ class Location {
         if($single_data) {
             return ModelDAO::getLastInsertedModel('location', 'location_id')[0]['location_id'];
         }
+    }
+
+    public static function getLocationByKeyword($keyword) {
+
+        $keyword = strip_tags($keyword);
+
+        $sql = "SELECT DISTINCT location_id FROM `location` 
+                WHERE location.address_line LIKE '%".$keyword."%' 
+                OR location.state LIKE '%".$keyword."%' 
+                OR location.city LIKE '%".$keyword."%' 
+                OR location.nearest_bustop LIKE '%".$keyword."%' 
+                OR location.area LIKE '%".$keyword."%';";
+   
+        return ModelDAO::getConnection()->executeQuery($sql)['data'];
     }
 
     public static function getFullLocation(int $locationID) {

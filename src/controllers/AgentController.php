@@ -4,6 +4,7 @@ namespace src\controllers;
 
 use src\models\Agent;
 use src\models\Model;
+use src\models\ModelDAO\AgencyDAO;
 use src\models\ModelDAO\AgentDAO;
 use src\models\ModelDAO\ModelDAO;
 use src\utils\ImageHandler;
@@ -29,10 +30,10 @@ class AgentController extends Controller {
 
     public function newAgent(Request $request) {
 
-        if(!(Application::$application->validateToken($request->getFormInputs()['token']))) {
-            echo json_encode(['status' => false, 'response' => 'Unauthorized']);
-            exit;
-        }
+        // if(!(Application::$application->validateToken($request->getFormInputs()['token']))) {
+        //     echo json_encode(['status' => false, 'response' => 'Unauthorized']);
+        //     exit;
+        // }
         if(!$request->isPost()) {
             echo json_encode(['status' => false, 'response' => 'Unauthorized']);
             exit;
@@ -75,6 +76,8 @@ class AgentController extends Controller {
         }
     }
 
+
+
     public function editAgent(Request $request) {
 
         if(!(Application::$application->validateToken($request->getFormInputs()['token']))) {
@@ -87,83 +90,75 @@ class AgentController extends Controller {
         }
 
         $agentID = $_SESSION['agent'];
-
-        //Check if user selected a means of identification
-        $id_type = $request->getFormInputs()['agent_id_type'] ?? false;
-        $agency_id = $request->getFormInputs()['agency_id'] ?? false;
-
-        if($id_type) {
-
-            $idImage = $this->imageHandler->getSingleImage('agent_id_image', 'agent') ?? false;
-            $this->model->agent_id_image = $idImage;
-
-            //Make new validation rules for Agent Authentication details and labels for errors
-            
-            $newRules = [
-                'agent_id_no' => [Model::RULE_REQUIRED],
-                'agent_id_type' => [Model::RULE_REQUIRED],
-                'agent_id_image' => [Model::RULE_REQUIRED]
-            ];
-
-            $newLabels = [
-                'agent_id_no' => 'ID Card number',
-                'agent_id_type' => 'ID type',
-                'agent_id_image' => 'ID scanned copy'
-            ];
-
-            $this->model->addRules($newRules);
-            $this->model->addLabels($newLabels);
-
-        }
-
-        if($request->getFormInputs()['agent_image'] ?? false) {
-
-            $this->model->agent_image = $this->imageHandler->getSingleImage('agent_image', 'agent') ?? '';
-
-        }
+        $formInput = Request::validateField($request->getFormInputs());
 
         $this->model->loadData($request->getFormInputs());
+        $this->agentDAO->updateAgent($agentID);
+
+        $id_type =  $formInput['agent_id_type'] ?? false;
+        $idImage = ($id_type) ? $this->imageHandler->getSingleImage('agent_id_image', 'agent') : '';
+        $idNo = $formInput['agent_id_no'];
+
+        if($id_type AND $idNo AND $idImage) {
+            if(AgentDAO::getAgentAuthDetailsByID($agentID) ) {
+                AgentDAO::updateAgentAuthDocuments($agentID, $id_type, $idNo);
+                ModelDAO::updateModelImage($agentID, $idImage, 'ID', 'Agent');
+            }
+            else {
+                AgentDAO::saveAgentAuthDocuments($agentID, $id_type, $idNo, $idImage);
+
+                if(ModelDAO::getModelImage($agentID, 'ID', 'Agent')) {
+                    ModelDAO::updateModelImage($agentID, $idImage, 'ID', 'Agent');
+                }
+                else {
+                    ModelDAO::saveModelImage($agentID, $idImage, 'ID', 'Agent');
+                }
+            }
+           
+        }
+
+        $agent_image = $this->imageHandler->getSingleImage('agent_image', 'agent') ?? false;
+        if($agent_image) {
+            if(ModelDAO::getModelImage($agentID,'profile', 'Agent')) {
+                ModelDAO::updateModelImage($agentID, $agent_image, 'profile', 'Agent');
+            }
+            else {
+                ModelDAO::saveModelImage($agentID, $agent_image, 'profile', 'Agent');
+            }
+        }
+
         
-        //Validate user inputs
-        if(!$this->model->validate()) {
-            unset($this->model->errors['agent_agree']);
-            $this->response->setResponseContent($this->model->errors);
-            echo json_encode(['status' => false, 'response' => $this->response->getResponseContent()]);
-            exit;
+        $agentSocials = $this->setSocials($request, $formInput);
+        $this->agentDAO->saveAgentSocials($agentSocials, $agentID);
+
+        //Check if user selected a means of identification
+        $agency_name = $request->getFormInputs()['agency'] ?? false;
+        if($agency_name) {
+            $agency_id = AgencyDAO::getAgencyByName($agency_name);
+            if(AgentDAO::getAgentAgencyAndRole($agentID)) {
+                AgentDAO::removeAgentAgency($agentID);
+            }
+            AgentDAO::saveAgentAgency($agency_id,  $agentID, $request->getFormInputs()['agent_role']);
         }
 
-        if($this->agentDAO->updateAgent()) {
-            $agentID = ModelDAO::getLastInsertedModel('agent', 'agent_id')[0]['agent_id'];
-            
-            $this->model = $this->setSocials($request, $this->model);
-
-            if($this->model->socials) {
-               $this->agentDAO->saveAgentSocials($agentID);
-            }   
-
-            if($this->model->agent_id_type) {
-                $this->agentDAO->saveAgentAuthDocuments($agentID);
-            }
-
-            if($agency_id) {
-                $this->agentDAO->saveAgentAgency($agentID);
-            }
-        }
+        echo json_encode(['status' => true, 'response' => 'Update successful']);
+        
     }
 
     //Set social handles for this agent
-    public function setSocials($request, Agent $agent) {
-        if($request->getFormInputs()['agent_whatsapp']?? false) {
-            $agent->socials['Whatsapp'] = $request->getFormInputs()['agent_whatsapp'];
+    public function setSocials($request, $userInput) {
+        $agentSocials = [];
+        if($userInput['agent_whatsapp']?? false) {
+            $agentSocials['Whatsapp'] = $userInput['agent_whatsapp'];
         }
-        if($request->getFormInputs()['agent_fb'] ?? false) {
-            $agent->socials['Facebook'] = $request->getFormInputs()['agent_fb'];
+        if($userInput['agent_fb'] ?? false) {
+            $agentSocials['Facebook'] = $userInput['agent_fb'];
         }
         if($request->getFormInputs()['agent_twitter']?? false) {
-            $agent->socials['Twitter'] =  $request->getFormInputs()['agent_twitter'];
+            $agentSocials['Twitter'] =  $userInput['agent_twitter'];
         }
         
-        return $agent;
+        return $agentSocials;
     }
 
     public function prepareModel($modelID) : array {
@@ -202,10 +197,12 @@ class AgentController extends Controller {
     private function prepareModelAuthDetails($authDetails) {
 
         if(count($authDetails) > 0) {
+
+            // var_dump(AgentDAO::getAgentIdImageURL($authDetails[0]['agent_agent_id'])[0]['imageURL']); exit;
             
             $this->model->agent_id_no = $authDetails[0]['id_no'];
             $this->model->agent_id_type = $authDetails[0]['id_type'];
-            $this->model->agent_id_image = AgentDAO::getAgentIdImageURL($authDetails[0]['id']);
+            $this->model->agent_id_image = AgentDAO::getAgentIdImageURL($authDetails[0]['agent_agent_id'])[0]['imageURL'] ?? '';
         }
         else {
             $this->model->agent_id_no = '';
@@ -241,9 +238,11 @@ class AgentController extends Controller {
     }
 
     private function getOneSocial($agentSocials, $social) {
+
+
         foreach($agentSocials as $key => $value) {
-            if($value[0][$social]) {
-                return $value[0]['social_link'];
+            if( strnatcasecmp($value['social_title'], $social) === 0) {
+                return $value['social_link'];
             }
         }
         return '';

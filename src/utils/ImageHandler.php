@@ -5,7 +5,7 @@ namespace src\utils;
 class ImageHandler {
 
     public function getSingleImage($imageName, $folderName) {
-        if(!$_FILES[$imageName]['tmp_name']) {
+        if($_FILES[$imageName]['tmp_name'] === "") {
             return;
         }
 
@@ -44,7 +44,7 @@ class ImageHandler {
     }
 
     public static function deleteImagePath($imageName) {
-        // var_dump($imageName); exit;
+      
         if($imageName != '' and file_exists($imageName) and unlink($imageName)) {
             return true;
         }

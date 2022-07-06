@@ -76,7 +76,7 @@ class AgencyDAO extends ModelDAO {
     }
 
     public static function getAgencyByName($agency_title) {
-        $sql = "SELECT * FROM agency WHERE agency_name = :agency_name";
+        $sql = "SELECT `agency_id` FROM agency WHERE agency_name = :agency_name";
         $body = ['agency_name' => $agency_title];
 
         return self::getConnection()->executeQuery($sql, $body)['data'] ?? false;

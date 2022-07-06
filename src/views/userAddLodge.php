@@ -1,4 +1,6 @@
-
+<?php  
+use src\utils\Location;
+?>
 <div class="page-heading">
     <div class="page-title">
         <div class="row">
@@ -56,9 +58,9 @@
                                             <label for="propertyType">Property Type</label>
                                             <select name="propertyType" class="custom-select">
                                                 <option value="">Select your type of lodge</option>
-                                                <option value="Whole apartment" <?php if($response['propertyType'] == 'Whole apartment')  echo 'selected'?>">Whole apartment</option>
-                                                <option value="Shared apartment" <?php if($response['propertyType'] == 'Shared apartment')  echo 'selected'?>>Shared apartment (for room mates)</option>
-                                                <option value="Bunk" <?php if($response['propertyType'] == 'Bunk')  echo 'selected'?>>Bunk (hostel bunk space)</option>
+                                                <option value="Whole apartment" <?php $prop = $response['propertyType'] ?? false; if ($prop and $prop == 'Whole apartment') echo 'selected'?>">Whole apartment</option>
+                                                <option value="Shared apartment"<?php $prop = $response['propertyType'] ?? false; if ($prop and $prop == 'Shared apartment (for room mates)') echo 'selected'?>>Shared apartment (for room mates)</option>
+                                                <option value="Bunk"<?php $prop = $response['propertyType'] ?? false; if ($prop and $prop == 'Bunk') echo 'selected'?>>Bunk (hostel bunk space)</option>
                                             </select>
                                             <p style="color: red; font-size: 16px; display: block;" id="propertyType"></p>
 
@@ -70,8 +72,8 @@
                                             <label for="propertyState">State of property</label>
                                             <select name="propertyState" class="custom-select">
                                                 <option value="">Status of your lodge</option>
-                                                <option value="New" <?php if($response['propertyState'] == 'New')  echo 'selected'?>>New</option>
-                                                <option value="Used" <?php if($response['propertyState'] == 'Used')  echo 'selected'?>>Used</option>
+                                                <option value="New"<?php $prop = $response['propertyState'] ?? false; if ($prop and $prop == 'New') echo 'selected'?>>New</option>
+                                                <option value="Used"<?php $prop = $response['propertyState'] ?? false; if ($prop and $prop == 'Used') echo 'selected'?>>Used</option>
                                             </select>
                                             <p style="color: red; font-size: 16px; display: block;" id="propertyState"></p>
                                         </div>
@@ -136,8 +138,14 @@
                                             <select name="propertyLocationState"
                                                 class="custom-select">
                                                 <option value="">Select Location State</option>
-                                                <option value="Abia"<?php if($response['propertyLocationState'] == 'Abia')  echo 'selected'?>>Abia</option>
-                                                <option value="Adamawa" <?php if($response['propertyLocationState'] == 'Adamawa')  echo 'selected'?>>Adamawa</option>
+
+                                                <?php 
+                                                    foreach(Location::STATES as $state) {
+                                                        echo ($response['propertyLocationState'] == $state) ? 
+                                                        '<option value="'.$state.'" selected >'.$state.'</option>' :
+                                                        '<option value="'.$state.'">'.$state.'</option>';
+                                                    }
+                                                ?>
                                             </select>
                                             <p style="color: red; font-size: 16px; display: block;" id="propertyLocationState"></p>
 

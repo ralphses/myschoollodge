@@ -96,7 +96,7 @@ class CustomerController extends Controller {
             return false;
         }
         
-        $property = PropertyDAO::getPropertyByID($this->propertyID)[0];
+        $property = PropertyDAO::getPropertyDetailsByID($this->propertyID)[0];
 
         $agentEmail = AgentDAO::getAgentByID($this->agentID)[0]['email'];
         $subject = "Enquiry on ".$property['title']." - ". $property['code']; 

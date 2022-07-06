@@ -43,8 +43,6 @@ class Router {
         }
 
         call_user_func($callback, $this->request);
-
-        // echo '<pre>'; var_dump($this->request->getFormInputs()); echo '</pre>';
     }
 
     public function renderView($view, $params = []) {
@@ -72,5 +70,4 @@ class Router {
         include_once Application::$ROOTH."/src/views/layout/$layout.php";
         return ob_get_clean();
     }
-    // echo '<pre>'; var_dump($_SERVER['REQUEST_URI']); echo '</pre>';
 }

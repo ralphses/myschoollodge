@@ -18,5 +18,9 @@ class Response {
         return $this->responseContent;
     }
 
+    public function addResponse($key, $value) {
+        $this->responseContent[$key] = $value;
+    }
+
 
 }

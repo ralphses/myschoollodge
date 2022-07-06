@@ -38,6 +38,7 @@ use src\utils\Location;
                 <?php
                     if(count($response) > 0) {
                         foreach($response as $key => $value) {
+
                             echo "<tr>"; 
                             echo "<td>".$value['code']."</td>";
                             echo "<td>".$value['title']."</td>";

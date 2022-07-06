@@ -110,18 +110,62 @@ class UtilDAO extends ModelDAO{
     public static function saveActivity(Activity $activity) {
         $sql = "INSERT INTO `recent_activities`(`agent_id`, `activity`) 
                 VALUES (:agent_id, :activity);";
-        $body = get_object_vars($activity);
+        $body = [
+            'agent_id' => $activity->user_id,
+            'activity' => $activity->activity
+        ];
 
         return self::getConnection()->executeQuery($sql, $body)['count'];
     }
 
-    public static function getActivityForAgent($thisAgentId) {
+    public static function getUserActivities($thisAgentId) {
         
         $sql = "SELECT `activity`, `date_added` 
                 FROM `recent_activities` 
-                WHERE agent_id = :agent_id;";
+                WHERE agent_id = :agent_id ORDER BY id DESC LIMIT 5;";
         $body = ['agent_id' => $thisAgentId];
 
-        return self::getConnection()->executeQuery($sql, $body)['count'];
+        return self::getConnection()->executeQuery($sql, $body)['data'];
+    }
+
+    public static function getAgentRequests($userID, $count = false) {
+        $sql = "SELECT * FROM customer_request WHERE agent_id = :agent_id;";
+        $body = ['agent_id' => $userID];
+
+        return (!$count) ? self::getConnection()->executeQuery($sql, $body)['data'] : self::getConnection()->executeQuery($sql, $body)['count']; 
+    }
+
+    public static function getUserCompleteRequests($userID) {
+
+        $sql = "SELECT  customer_request.id, first_name, customer_request.status, other_name, phone, title 
+                FROM `customer_request` 
+                JOIN customer ON customer_request.customer_id = customer.id 
+                JOIN property ON property.id = customer_request.property_id 
+                WHERE customer_request.agent_id = :agent_id;";
+
+        $body = ['agent_id' => $userID];
+
+        return self::getConnection()->executeQuery($sql, $body)['data']; 
+    }
+
+    public static function getAgentRecentRequests($userID, $count = false) {
+        $sql = "SELECT * FROM customer_request WHERE agent_id = :agent_id ORDER BY request_date DESC LIMIT 3;";
+        $body = ['agent_id' => $userID];
+
+        return (!$count) ? self::getConnection()->executeQuery($sql, $body)['data'] : self::getConnection()->executeQuery($sql, $body)['count']; 
+    }
+
+    public static function getAgentPendingRequests($userID, $count = false) {
+        $sql = "SELECT * FROM customer_request WHERE agent_id = :agent_id AND status = -1;";
+        $body = ['agent_id' => $userID];
+
+        return (!$count) ? self::getConnection()->executeQuery($sql, $body)['data'] : self::getConnection()->executeQuery($sql, $body)['count']; 
+    }
+
+    public static function getAgentCompletedRequests($userID, $count = false) {
+        $sql = "SELECT * FROM customer_request WHERE agent_id = :agent_id AND status = 1;";
+        $body = ['agent_id' => $userID];
+
+        return (!$count) ? self::getConnection()->executeQuery($sql, $body)['data'] : self::getConnection()->executeQuery($sql, $body)['count']; 
     }
 }

@@ -8,6 +8,7 @@ use src\models\ModelDAO\ModelDAO;
 use src\models\ModelDAO\PropertyDAO;
 use src\models\ModelDAO\UtilDAO;
 use src\models\Property;
+use src\utils\Activity;
 use src\utils\ImageHandler;
 use src\utils\Request;
 use src\utils\Response;
@@ -111,8 +112,9 @@ class PropertyController extends Controller {
             exit;
         }
         
-        if(!$this->extras) {
+        if(!$_SESSION['update']) {
 
+        
              // Save property basic details
             $this->model->locationID = $this->resolveLocation($request);
             $this->model->code = $this->createPropertyCode();
@@ -132,8 +134,12 @@ class PropertyController extends Controller {
                 $this->propertyDAO->saveFacilities();
     
                 $this->resolveImages();
-    
+
+                //Save this activitiy
+                Activity::createActivity($this->model->propertyName.' was added', $this->model->agentID);
+ 
                 echo json_encode(['status' => true]);
+
                 exit;
             }
         }
@@ -172,6 +178,11 @@ class PropertyController extends Controller {
                 } 
 
                 $this->resolveImages();
+
+                 //Save this activitiy
+                 Activity::createActivity($this->model->propertyName.' was updated', $_SESSION['agent']);
+
+                 $_SESSION['update'] = false;
 
                 echo json_encode(['status' => true]);
 
@@ -245,6 +256,7 @@ class PropertyController extends Controller {
         $this->preparePropertyImages($modelID);
 
         $_SESSION['extras'] = $this->extras;
+        $this->extras = false;
 
         return $this->cleanModel($this->model);
     }
@@ -346,7 +358,7 @@ class PropertyController extends Controller {
          $this->model->images[$this->imageHandler->getSingleImage('propertyFeaturedImage', 'property')] = 'Featured image';
 
 
-       if(!$_SESSION['extras']) {
+       if(!$this->extras) {
 
            //Save all images to images table
            $this->propertyDAO->saveImages();

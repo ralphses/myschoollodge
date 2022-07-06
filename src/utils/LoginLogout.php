@@ -32,7 +32,6 @@ class LoginLogout extends Controller {
         $userName = $request->getFormInputs()['email_address'] ?? false;
         $password = $request->getFormInputs()['agent_password'] ?? false;
 
-        // echo $userName, $password; exit;
 
         // Unlock if more than 24 hours
        if(UtilDAO::getNoOfLogins($userName) > 0) {
@@ -70,7 +69,7 @@ class LoginLogout extends Controller {
             $_SESSION['agent'] = $agent[0]['agent_id'];
 
             UtilDAO::clearLogins($userName);
-            echo json_encode(['status' => true, 'response' => 'Invalid login details, please check']);
+            echo json_encode(['status' => true, 'response' => 'Login successful!']);
             exit;
 
         }

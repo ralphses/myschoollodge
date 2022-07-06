@@ -2,6 +2,7 @@
 
 namespace src\models\ModelDAO;
 
+use mysqli;
 use src\models\Property;
 use src\utils\ImageHandler;
 
@@ -142,11 +143,11 @@ class PropertyDAO extends ModelDAO {
         return self::getConnection()->executeQuery($sql, $body)['data'];
     }
 
-    public static function getAgentProperties($userID) {
+    public static function getAgentProperties($userID, $count = false) {
         $sql = "SELECT * FROM property WHERE agent_id = :agent_id;";
         $body = ['agent_id' => $userID];
 
-        return self::getConnection()->executeQuery($sql, $body)['data'];
+        return (!$count) ? self::getConnection()->executeQuery($sql, $body)['data'] : self::getConnection()->executeQuery($sql, $body)['count']; 
     }
 
     public static function deleteProperty($prop_id) {
@@ -279,4 +280,134 @@ class PropertyDAO extends ModelDAO {
         return self::getConnection()->executeQuery($sql, $body)['data'];
     }
 
+    public static function getDescriptionByKeyword($description) {
+
+        $sql = "SELECT DISTINCT property.id as id FROM `property` 
+                JOIN property_details 
+                WHERE property.title LIKE '%".strip_tags(stripslashes($description))."%' 
+                OR property_details.description LIKE  '%".strip_tags(stripslashes($description))."%';";
+     
+        return self::getConnection()->executeQuery($sql)['data'];
+    }
+
+    public static function getFacilitiesByKeyword($basic, $entertain, $garage) {
+
+        $sql = "SELECT DISTINCT property_id as id FROM `prop_facility` 
+                WHERE facility_title LIKE '%".strip_tags(stripslashes($basic))."%'
+                OR facility_title LIKE '%".strip_tags(stripslashes($entertain))."%'
+                OR facility_title LIKE '%".strip_tags(stripslashes($garage))."%';";
+
+     
+        return self::getConnection()->executeQuery($sql)['data'];
+    }
+
+    public static function getAgentPropertiesByMultiID(
+        $locations, 
+        $readyIds, 
+        $category, 
+        $price_range_high, 
+        $price_range_low
+        ) {
+
+        $sql = "SELECT * FROM `property` 
+                WHERE property.id IN (:id) 
+                AND property.location_id IN (:loc) 
+                AND property.status = 1 
+                AND property.price >= :price_low 
+                AND property.price <= :price_high 
+                AND property.type LIKE '%".strip_tags(stripslashes($category))."%';";
+
+
+        $body = [
+            'id' =>  $readyIds,
+            'loc' => $locations,
+            'price_low' => $price_range_low,
+            'price_high' => $price_range_high
+        ];
+
+        $sql1 = "SELECT * FROM `property` WHERE property.id IN (35,42,43,54,12,39);";
+        $sql2 = "SELECT * FROM `property` WHERE property.title LIKE '%bedroom%';";
+        $sql3 = "SELECT * FROM `property` WHERE property.type LIKE '%single%';";
+        $sql4 = "";
+        $sql5 = "";
+        
+        return self::getConnection()->executeQuery($sql, $body)['data'];
+    }
+
+    public static function searchPropertyByLocations($locations = "") {
+
+        if(strlen($locations) > 0) {
+            $sql = "SELECT * FROM `property` WHERE property.location_id IN (".$locations.");";
+            return self::getConnection()->executeQuery($sql)['data'];
+        }
+        return[];
+    }
+
+    public static function getPropertiesByDescription($descriptions = "") {
+
+        if(strlen($descriptions) > 0) {
+
+            $sql = "SELECT * FROM `property` WHERE property.id IN (".$descriptions.");";
+            return self::getConnection()->executeQuery($sql)['data'];
+        }
+        return[];
+    }
+
+    
+    public static function getPropertiesByPriceRange($price_range_high, $price_range_low) {
+
+        if($price_range_high > $price_range_low) {
+            $sql = "SELECT * FROM `property` WHERE property.price BETWEEN ".$price_range_low." AND ".$price_range_high." ;";
+            return self::getConnection()->executeQuery($sql)['data'];
+        }
+        else {
+            $sql = "SELECT * FROM `property` WHERE property.price BETWEEN ".$price_range_high." AND ".$price_range_low." ;";
+            return self::getConnection()->executeQuery($sql)['data'];
+        }
+        return[];
+    }
+
+    public static function getPropertiesByType($type = "") {
+
+        if(strlen($type) > 0) {
+            $sql = 'SELECT * FROM `property` WHERE property.type LIKE "%'.$type.'%";';
+            return self::getConnection()->executeQuery($sql)['data'];
+        }
+        return[];
+    }
+
+    public static function searchPropertyWithFacilities($type = "") {
+
+        if(strlen($type) > 0) {
+            $sql = 'SELECT * FROM `property` WHERE property.type LIKE "%'.$type.'%";';
+            return self::getConnection()->executeQuery($sql)['data'];
+        }
+        return[];
+    }
+
+    public static function getLatestAddedProperties() {
+        $sql = "SELECT * FROM property ORDER BY property.id DESC LIMIT 20;";
+        return self::getConnection()->executeQuery($sql)['data'];
+    }
+
+    public static function getPropertyFeaturedImage($property_id) {
+        $sql = 'SELECT `imageURL` FROM `images` 
+                WHERE images.id = :id 
+                AND images.image_type = :type
+                AND images.model = "property";';
+                
+        $body = [
+            'id' => $property_id,
+            'type' => "Featured image"
+        ];
+
+        return self::getConnection()->executeQuery($sql, $body)['data'];
+    }
+
+    public static function getFeaturedProperties() {
+        $sql = "SELECT * FROM property WHERE featured = 1 ORDER BY id LIMIT 10;";
+        return self::getConnection()->executeQuery($sql)['data'];
+    }
 }
+
+// echo '<pre>'; var_dump($locations); echo '</pre>'; exit;

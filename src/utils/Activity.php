@@ -6,8 +6,8 @@ use src\models\ModelDAO\UtilDAO;
 
 class Activity {
 
-    private string $activity;
-    private string $user_id;
+    public string $activity;
+    public string $user_id;
 
     private function __construct(string $activity, string $user_id) {
 

@@ -37,4 +37,15 @@ abstract class Controller {
         echo Application::$application->getRouter()->renderView($view, $params);
     }
 
+    protected function getRandomName($imageLength = 7) {
+        $chars = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
+        $folder = '';
+
+        for($i = 0; $i < $imageLength; $i++) {
+            $index = rand(0, strlen($chars) - 1);
+            $folder .= $chars[$index]; 
+        }
+        return $folder;
+    }
+
 }

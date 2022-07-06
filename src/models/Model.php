@@ -61,6 +61,10 @@ abstract class Model {
         }
     }
 
+    public function removeRule($rule) {
+       unset($this->rules['$rule']);
+    }
+
     public function addLabels($labels) {
         foreach($labels as $attribute => $label) {
             $this->labels[$attribute] = $label;
@@ -123,9 +127,6 @@ abstract class Model {
                 if($ruleName === self::RULE_PASSWORD and !preg_match('@[0-9]@', $value) and !preg_match('@[A-Z]@', $value) and !preg_match('@[a-z]@', $value)) {
                     $this->addError($attribute, self::RULE_PASSWORD);
                 }
-                
-                
-
             }
         }
         return empty($this->errors);

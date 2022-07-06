@@ -1,10 +1,5 @@
 
 
-        <?php 
-        echo '<pre>'; var_dump($response); echo '</pre>'; ;
-
-        ?>
-
         <!-- Hero section end -->
 
         <!-- contact form start -->
@@ -17,7 +12,7 @@
                     <div class="grid grid-cols-12 gap-x-[30px] mb-[-30px]">
                         <div class="col-span-12 lg:col-span-6 mb-[30px]">
                             <h2 class="font-recoleta text-primary text-[24px] sm:text-[30px] leading-[1.277] xl:text-xl mb-[15px]">
-                                Create Account<span class="text-secondary">.</span></h2>
+                                <?php echo ($_SESSION['agent']) ? "Edit Your Account" : "Create Account";?><span class="text-secondary">.</span></h2>
 
                             <p class="max-w-[465px] mb-[50px]">
                                 Huge number of propreties availabe here for buy, sell and Rent.
@@ -46,21 +41,21 @@
                                 </div>
 
                                 <div class="col-span-12">
-                                    <input class="font-light w-full sm:w-[400px] leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] " name="agent_password"  type="password" placeholder="Enter your password">
-                                    <p class="error" id="agent_password"></p>
-                                </div>
-
-                                <div class="col-span-12">
-                                    <input class="font-light w-full sm:w-[400px] leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] " name="agent_confirm_password" type="password" placeholder="Confirm Password">
-                                    <p class="error" id="agent_confirm_password"  ></p>
-                                </div>
-
-                                <div class="col-span-12">
                                 <label for="passport" class="ml-[5px] cursor-pointer">Upload your photo (Optional)</label> <br>
                                     <input class="font-light w-full sm:w-[400px] leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] " name="agent_image" id="agent_image"  type="file" placeholder="passport">
 
-                                   
                                 </div>
+
+                                <div class="col-span-12">
+                                    <div class="relative" style="width: 85%;">
+                                    <label for="passport" class="ml-[5px] cursor-pointer" style="margin: 0;"> <strong>Your agency</strong></label> <br>
+                                        <select class="nice-select form-select" id="agency" name="agency">
+                                            <option value="">Select your agency</option>
+                                            <option value="1">Yes</option>
+                                            <option value="2">No</option>
+                                        </select>
+                                    </div>
+                            </div>
 
                             </div>
                         </div>
@@ -71,31 +66,20 @@
                             <div class="grid grid-cols-12 gap-x-[20px] gap-y-[35px]">
 
                             <div class="col-span-12">
-                            <div class="relative" style="width: 85%;">
-                            <label for="passport" class="ml-[5px] cursor-pointer" style="margin: 0;"> <strong>Your agency</strong></label> <br>
-                                <select class="nice-select form-select" id="agency" name="agency">
-                                    <option value="">Select your agency</option>
-                                    <option value="1">Yes</option>
-                                    <option value="2">No</option>
-                                </select>
-                            </div>
-                            </div>
-
-                            <div class="col-span-12">
                                 <label for="agent_role" class="ml-[5px] cursor-pointer" style="margin: 0;"> <strong>Role in agency</strong></label> <br>
                                     <input class="font-light w-full sm:w-[400px] leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] " name="agent_role" id="agent_role"  type="text" placeholder="Enter your role in agency (e.g manager, field agent)" value="<?php echo $response['role'] ?? '' ?>">
                                 </div>
                             
                             <div class="col-span-12">
                                 <label for="passport" class="ml-[5px] cursor-pointer" style="margin: 0;"> <strong>Social media handles</strong></label> <br>
-                                    <input class="font-light w-full sm:w-[400px] leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] " name="agent_whatsapp" id="agent_whatsapp"  type="text" placeholder="Whatsapp" <?php echo $response['agent_whatsapp'] ?? '' ?>>
+                                    <input class="font-light w-full sm:w-[400px] leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] " name="agent_whatsapp" id="agent_whatsapp"  type="text" placeholder="Whatsapp" value="<?php echo $response['agent_whatsapp'] ?? '' ?>">
                                 </div>
                                 <div class="col-span-12">
-                                    <input class="font-light w-full sm:w-[400px] leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] " name="agent_fb" id="agent_fb"  type="text" placeholder="facebook link"<?php echo $response['agent_fab'] ?? '' ?>>
+                                    <input class="font-light w-full sm:w-[400px] leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] " name="agent_fb" id="agent_fb"  type="text" placeholder="facebook link" value="<?php echo $response['agent_fb'] ?? '' ?>">
                                 </div>
 
                                 <div class="col-span-12">
-                                    <input class="font-light w-full sm:w-[400px] leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] " name="agent_twitter" id="agent_twitter"  type="text" placeholder="Twitter" <?php echo $response['agent_twitter'] ?? '' ?>>
+                                    <input class="font-light w-full sm:w-[400px] leading-[1.75] placeholder:opacity-100 placeholder:text-body border border-primary border-opacity-60 rounded-[8px] p-[15px] focus:border-[#FD6400] focus:border-opacity-60 focus:outline-none focus:drop-shadow-[0px_6px_15px_rgba(0,0,0,0.1)] " name="agent_twitter" id="agent_twitter"  type="text" placeholder="Twitter" value="<?php echo $response['agent_twitter'] ?? '' ?>">
                                 </div>
 
 

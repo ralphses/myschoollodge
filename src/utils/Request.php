@@ -42,4 +42,14 @@ class Request {
         }
         return $formInputs;
     }
+
+    public static function validateField($data) {
+        if(is_array($data)) {
+            foreach($data as $key => $value) {
+                $data[$key] = htmlspecialchars(stripslashes(trim($value)));
+            }
+            return $data;
+        }
+        return ($data) ? htmlspecialchars(stripslashes(trim($data))) : '';
+    }
 }

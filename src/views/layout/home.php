@@ -346,6 +346,10 @@ $agent = $_SESSION['agent'] ?? false;
     <!-- Activation JS -->
     <script src="assets/js/main.js"></script>
     <script src="assets/js/custom.js"></script>
+    <script src="assets/user/assets/js/extensions/sweetalert2.js"></script>
+    <script src="assets/js/custom.js"></script>
+
+    <script src="assets/user/assets/vendors/sweetalert2/sweetalert2.all.min.js"></script>
 
 
 </body>
