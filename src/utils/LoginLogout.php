@@ -5,6 +5,7 @@ namespace src\utils;
 use src\controllers\Controller;
 use src\models\ModelDAO\AgentDAO;
 use src\models\ModelDAO\UtilDAO;
+use src\models\ModelDAO\AdminDAO;
 use src\models\Model;
 
 class LoginLogout extends Controller {
@@ -19,10 +20,10 @@ class LoginLogout extends Controller {
 
     public static function logingNewUser(Request $request) {
 
-        if(!(Application::$application->validateToken($request->getFormInputs()['token']))) {
-            echo json_encode(['status' => false, 'response' => 'Unauthorized']);
-            exit;
-        }
+        // if(!(Application::$application->validateToken($request->getFormInputs()['token']))) {
+        //     echo json_encode(['status' => false, 'response' => 'Unauthorized']);
+        //     exit;
+        // }
            
         if(!$request->isPost()) {
             echo json_encode(['status' => false, 'response' => 'Unauthorized']);
@@ -34,15 +35,7 @@ class LoginLogout extends Controller {
 
 
         // Unlock if more than 24 hours
-       if(UtilDAO::getNoOfLogins($userName) > 0) {
-
-            $lastLoginTime = date('Y-m-d H:m:s', strtotime(UtilDAO::getlastLoginTime($userName)));
-            $thisTime = date('Y-m-d H:m:s', strtotime( '+1hour', strtotime(UtilDAO::getlastLoginTime($userName))));
-        
-            if($lastLoginTime > $thisTime and intval(UtilDAO::getNoOfLogins($userName)) < 10) {
-                UtilDAO::clearLogins($userName);
-            }
-       }
+        self::checkLogin($userName);
 
         if(!($userName and $password)) {
             echo json_encode(['response' => 'Invalid login details, please check']);
@@ -59,8 +52,40 @@ class LoginLogout extends Controller {
             exit;
         }
 
-        $agent = AgentDAO::getAgentByEmail($userName);
+        if((strcasecmp($request->getPath(), '/admin') === 0)) {
+            $thisAdmin = AdminDAO::getAdminByEmail($userName);
 
+            if(($thisAdmin AND ($thisAdmin[0]['tmp_pass'] != "") AND (strcasecmp($password, $thisAdmin[0]['tmp_pass']) === 0))) {
+
+                session_regenerate_id(true); //create a new session id
+                $_SESSION['admin_logged_in'] = $_SESSION['new'] = true;
+                $_SESSION['admin'] = $thisAdmin[0]['id'];
+
+                header("Location: /new-password");
+                exit;
+
+            }
+            if($thisAdmin AND password_verify($password, $thisAdmin[0]['password'])) {
+            // if($thisAdmin AND (strcasecmp($password, $thisAdmin[0]['password']) === 0)) {
+
+                session_regenerate_id(true); //create a new session id
+                $_SESSION['admin_logged_in'] = true;
+                $_SESSION['admin'] = $thisAdmin[0]['id'];
+                
+    
+                UtilDAO::clearLogins($userName);
+                echo json_encode(['admin' => true, 'status' => true, 'response' => 'Login successful!']);
+                exit;                
+            }
+            else {
+
+                UtilDAO::registerLoginAttempt($userName);
+                echo json_encode(['response' => 'Invalid login details, please check']);
+                exit;
+            }
+        }
+
+        $agent = AgentDAO::getAgentByEmail($userName);
 
         if($agent and password_verify($password, $agent[0]['password'])) {
 
@@ -79,6 +104,22 @@ class LoginLogout extends Controller {
             echo json_encode(['response' => 'Invalid login details, please check']);
             exit;
         }
+
+    }
+
+    private static function checkLogin($userName) {
+
+        if(UtilDAO::getNoOfLogins($userName) > 0) {
+
+            $lastLoginTime = date('Y-m-d H:m:s', strtotime(UtilDAO::getlastLoginTime($userName)));
+            $thisTime = date('Y-m-d H:m:s', strtotime( '+1hour', strtotime(UtilDAO::getlastLoginTime($userName))));
+        
+            if($lastLoginTime > $thisTime and intval(UtilDAO::getNoOfLogins($userName)) < 10) {
+                UtilDAO::clearLogins($userName);
+                return true;
+            }
+            return false;
+       }
 
     }
 
@@ -119,7 +160,42 @@ class LoginLogout extends Controller {
 
     public function createPasswordNew(Request $request) {
 
+    
+        if(!$request->isPost() OR !( $_SESSION['admin_logged_in']) OR !( $_SESSION['admin'])) {
+           
+            header("Location: /");
+            exit;
+        }
+        $newPasswordDeatails = $request->getFormInputs()?? false;
 
+        if($newPasswordDeatails) {
+            $newPassword = $newPasswordDeatails['pasword'];
+            $confirmPassword = $newPasswordDeatails['confirm-password'];
+
+            if($this->verifyPassword($newPassword) AND (strcasecmp($newPassword, $confirmPassword) === 0)) {
+
+                AdminDAO::newPassword($_SESSION['admin'], $newPassword);
+                echo json_encode(['status' => true, 'response' => 'Password Updated successfully!']);
+
+                //Clear temp pass word
+                AdminDAO::clearTempPass($_SESSION['admin']);
+                exit;
+            }
+
+            else {
+                echo json_encode(['status' => false, 'response' => 'Invalid password details, please check']);
+                exit;
+            }
+        }
+        echo json_encode(['status' => false, 'response' => 'Invalid login password, please check']);
+
+       
+
+
+    }
+
+    private function verifyPassword($password) {
+        return (preg_match('@[0-9]@', $password) and preg_match('@[A-Z]@', $password) and preg_match('@[a-z]@', $password));
     }
 
     public function resetingPass(Request $request) {

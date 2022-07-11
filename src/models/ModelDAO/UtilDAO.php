@@ -32,10 +32,10 @@ class UtilDAO extends ModelDAO{
         return ModelDAO::getConnection()->executeQuery($sql, $body)['data'][0]['login_time'];
     }
 
-    public static function clearLogins(string $email_address) {
+    public static function clearLogins(string $email) {
 
         $sql = "DELETE FROM `login_attempt` WHERE email = :email;";
-        $body = ['email' => $email_address];
+        $body = ['email' => $email];
 
         return ModelDAO::getConnection()->executeQuery($sql, $body)['count'];
     }
@@ -167,5 +167,24 @@ class UtilDAO extends ModelDAO{
         $body = ['agent_id' => $userID];
 
         return (!$count) ? self::getConnection()->executeQuery($sql, $body)['data'] : self::getConnection()->executeQuery($sql, $body)['count']; 
+    }
+
+    public static function getAdminActivities($thisAgentId) {
+        
+        $sql = "SELECT `activity`, `date_added` 
+                FROM `recent_activities` 
+                WHERE agent_id = :agent_id AND `model` = 'Admin' ORDER BY id DESC LIMIT 5;";
+        $body = ['agent_id' => $thisAgentId];
+
+        return self::getConnection()->executeQuery($sql, $body)['data'];
+    }
+
+    public static function getRecentRequests($userID) {
+        $sql = "SELECT * FROM customer_request
+                ORDER BY request_date DESC LIMIT 3;";
+
+        $body = ['agent_id' => $userID];
+
+        return self::getConnection()->executeQuery($sql, $body)['data']; 
     }
 }

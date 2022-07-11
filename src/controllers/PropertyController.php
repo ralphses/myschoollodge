@@ -114,7 +114,6 @@ class PropertyController extends Controller {
         
         if(!$_SESSION['update']) {
 
-        
              // Save property basic details
             $this->model->locationID = $this->resolveLocation($request);
             $this->model->code = $this->createPropertyCode();

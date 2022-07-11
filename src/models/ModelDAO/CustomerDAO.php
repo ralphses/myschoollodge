@@ -63,4 +63,10 @@ class CustomerDAO extends ModelDAO {
 
     }
 
+    public static function getCustomerById($customerId) {
+        $sql = 'SELECT * FROM customer WHERE `id` = :id;';
+        return self::getConnection()->executeQuery($sql, ['id' => $customerId])['data'];
+
+    }
+
 }

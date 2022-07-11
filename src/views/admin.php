@@ -1,10 +1,13 @@
+<?php 
+echo '<pre>'; var_dump($response); echo '</pre>';;
 
+?>
 <div class="page-heading">
                 <h3>Welcome <strong><?php
 
 use src\models\ModelDAO\AgentDAO;
 
- echo $response['user']['agent_name'] ?? 0; echo (AgentDAO::getAgentCompleteRegStatus($_SESSION['agent']) > 0) ? '' : '<a href="/modify-agent"><span style="color: red;">(Activate Account)</span></a>';?></strong> </h3>
+ echo $response['full_name'] ?? 0; ?></strong> </h3>
             </div>
           
             <div class="page-content">
@@ -22,7 +25,7 @@ use src\models\ModelDAO\AgentDAO;
                                             </div>
                                             <div class="col-md-8">
                                                 <h6 class="text-muted font-semibold">Total Lodges</h6>
-                                                <h6 class="font-extrabold mb-0"><?php echo $response['total properties'] ?? 0?></h6>
+                                                <h6 class="font-extrabold mb-0"><?php echo $response['total_lodges'] ?? 0?></h6>
                                             </div>
                                         </div>
                                     </div>
@@ -39,7 +42,7 @@ use src\models\ModelDAO\AgentDAO;
                                             </div>
                                             <div class="col-md-8">
                                                 <h6 class="text-muted font-semibold">Total Requests</h6>
-                                                <h6 class="font-extrabold mb-0"><?php echo $response['total requests'] ?? 0?></h6>
+                                                <h6 class="font-extrabold mb-0"><?php echo $response['total_request'] ?? 0?></h6>
                                             </div>
                                         </div>
                                     </div>
@@ -56,7 +59,7 @@ use src\models\ModelDAO\AgentDAO;
                                             </div>
                                             <div class="col-md-8">
                                                 <h6 class="text-muted font-semibold">Pending Requests</h6>
-                                                <h6 class="font-extrabold mb-0"><?php echo $response['pending requests'] ?? 0?></h6>
+                                                <h6 class="font-extrabold mb-0"><?php echo $response['total_pending_request'] ?? 0?></h6>
                                             </div>
                                         </div>
                                     </div>
@@ -73,7 +76,7 @@ use src\models\ModelDAO\AgentDAO;
                                             </div>
                                             <div class="col-md-8">
                                                 <h6 class="text-muted font-semibold">Completed Requests</h6>
-                                                <h6 class="font-extrabold mb-0"><?php echo $response['completed requests'] ?? 0?></h6>
+                                                <h6 class="font-extrabold mb-0"><?php echo $response['total_completed_request'] ?? 0?></h6>
                                             </div>
                                         </div>
                                     </div>
@@ -140,8 +143,8 @@ use src\models\ModelDAO\AgentDAO;
                                             <img src="assets/user/assets/images/faces/1.jpg" alt="Face 1">
                                         </div>
                                         <div class="ms-3 name">
-                                            <h5 class="font-bold"><?php echo substr($response['user']['agent_name'], 0, strpos($response['user']['agent_name'], ' ')) ?? 'User'?></h5>
-                                            <h6 class="text-muted mb-0"><?php echo $response['user']['agent_email'] ?? 0?></h6>
+                                            <h5 class="font-bold"><?php echo $response['full_name'] ?? 'User'?></h5>
+                                            <h6 class="text-muted mb-0"><?php echo $response['email'] ?? 0?></h6>
                                         </div>
                                     </a>
                                 </div>
@@ -154,8 +157,8 @@ use src\models\ModelDAO\AgentDAO;
                             <div class="card-content pb-4">
 
                             <?php 
-                                if(count($response['recent requests']) > 0 ) {
-                                    foreach($response['recent requests'] as $req) {
+                                if(count($response['recent_request']) > 0 ) {
+                                    foreach($response['recent_request'] as $req) {
                                         echo '<div class="recent-message d-flex px-4 py-3">';
                                         echo '<div class="name ms-4">';
                                         echo '<h5 class="mb-1">'.$req.'</h5>';

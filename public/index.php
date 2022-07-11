@@ -2,11 +2,11 @@
 
 require_once '../vendor/autoload.php';
 
+use src\controllers\AdminController;
 use src\controllers\AgencyController;
 use src\controllers\AgentController;
 use src\controllers\CustomerController;
 use src\controllers\PropertyController;
-use src\controllers\SearchController;
 use src\controllers\SiteController;
 use src\utils\Application;
 use src\utils\LoginLogout;
@@ -34,8 +34,11 @@ $application->getRouter()->get('/customer-requests', [SiteController::class, 'us
 $application->getRouter()->get('/view-lodges', [SiteController::class, 'seeUserLodge']);
 $application->getRouter()->get('/admin-home', [SiteController::class, 'ourAdmin']);
 $application->getRouter()->get('/admin', [SiteController::class, 'loginAdmin']);
+$application->getRouter()->get('/view-users', [SiteController::class, 'viewAllUsers']);
+$application->getRouter()->get('/add-admin', [SiteController::class, 'addAdmin']);
 
 $application->getRouter()->post('/modify-agent', [AgentController::class, 'editAgent']);
+$application->getRouter()->post('/add-admin', [AdminController::class, 'addAdmin']);
 $application->getRouter()->post('/new-agent', [AgentController::class, 'newAgent']);
 
 $application->getRouter()->post('/new-agency', [AgencyController::class, 'newAgency']);
@@ -46,6 +49,7 @@ $application->getRouter()->post('/delete-property', [PropertyController::class, 
 $application->getRouter()->post('/new-customer', [CustomerController::class, 'newCustomer']);
 
 $application->getRouter()->post('/login', [LoginLogout::class, 'logingNewUser']);
+$application->getRouter()->post('/admin', [LoginLogout::class, 'logingNewUser']);
 $application->getRouter()->post('/reset-password', [LoginLogout::class, 'resetingPass']);
 $application->getRouter()->post('/logout', [LoginLogout::class, 'logingOUTUser']);
 $application->getRouter()->post('/new-password', [LoginLogout::class, 'createPasswordNew']);

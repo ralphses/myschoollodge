@@ -408,6 +408,31 @@ class PropertyDAO extends ModelDAO {
         $sql = "SELECT * FROM property WHERE featured = 1 ORDER BY id LIMIT 10;";
         return self::getConnection()->executeQuery($sql)['data'];
     }
+
+    public static function getAllProperties() {
+        $sql = 'SELECT * FROM `property`;';
+        return self::getConnection()->executeQuery($sql)['data']; 
+    }
+
+    public static function getTotalProperties() {
+       $sql = 'SELECT COUNT(property.id) AS total_properties FROM `property`;';
+       return self::getConnection()->executeQuery($sql)['data']; 
+    }
+
+    public static function getTotalCustomerRequest() {
+        $sql = 'SELECT COUNT(id) AS total_request FROM `customer_request`;';
+        return self::getConnection()->executeQuery($sql)['data']; 
+    }
+
+    public static function getTotalPendingCustomerRequest() {
+        $sql = 'SELECT COUNT(id) AS total_request FROM `customer_request` WHERE customer_request.status = -1;';
+        return self::getConnection()->executeQuery($sql)['data']; 
+    }
+
+    public static function getTotalCompletedCustomerRequest() {
+        $sql = 'SELECT COUNT(id) AS total_request FROM `customer_request` WHERE customer_request.status = 1;';
+        return self::getConnection()->executeQuery($sql)['data']; 
+    }
 }
 
 // echo '<pre>'; var_dump($locations); echo '</pre>'; exit;

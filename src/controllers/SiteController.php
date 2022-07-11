@@ -16,6 +16,20 @@ class SiteController extends Controller {
         $this->response = new Response();    
     }
 
+    public function addAdmin() {
+        $this->setLayout('admin');
+        return $this->render('addAdmin');
+    }
+
+    public function viewAllUsers() {
+
+        $this->setLayout('admin');
+        $users = AgentDAO::getAllAgent();
+
+        return $this->render('viewUsers', ['response' => $users]);
+
+    }
+
     public function seeUserLodge() {
         $this->setLayout('user');
         $properties =[];
@@ -76,7 +90,7 @@ class SiteController extends Controller {
 
     public function userHome() {
 
-        if(!$_SESSION['logged_in']) {
+        if(!$_SESSION['logged_in'] AND !$_SESSION['agent']) {
             header('Location: /'); exit;
         }
 
@@ -188,8 +202,25 @@ class SiteController extends Controller {
     }
 
     public function ourAdmin() {
-        $this->setLayout('user');
-        return $this->render('admin');
+
+        $adminLoggedIn = $_SESSION['admin_logged_in'] ?? false;
+        $adminId = $_SESSION['admin'] ?? false;
+
+        if($adminLoggedIn AND  $adminId) {
+            
+            $this->setLayout('admin');
+
+            $adminId = $_SESSION['admin'] ?? false;
+            $adminController = new AdminController();
+            $adminData = $adminController->prepareModel($adminId);
+    
+            return $this->render('admin', ['response' => $adminData]);
+        }
+        else {
+            header("Location: /");
+            exit;
+        }
+       
     }
     
     public function prepareModel($modelID) : array { return [];}

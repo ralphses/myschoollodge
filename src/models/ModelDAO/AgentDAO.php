@@ -306,6 +306,13 @@ class AgentDAO extends ModelDAO {
         return self::getConnection()->executeQuery($sql, $body)['count'];
     }
 
+    public static function getAllAgent() {
+        $sql = 'SELECT `agent_id`, `agent_title`, `email`, `phone`, `address`, `avg_rating` 
+                FROM `agent` 
+                INNER JOIN rating ON rating.rating_id = agent.agent_rating_id;';
+        return self::getConnection()->executeQuery($sql)['data'];
+    }
+
 
     public static function getAgentProperty() {
         

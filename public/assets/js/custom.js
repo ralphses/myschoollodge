@@ -10,11 +10,13 @@ const addLoddgeForm = document.getElementById('add-property');
 const deletePropBtn = document.querySelectorAll('.delete_propBtn');
 
 if(deletePropBtn) {
-    
+
    deletePropBtn.forEach(btn => {
         btn.addEventListener('click', () => {
+
             Swal.fire({ icon: "question", title: "Delete Lodge", showCancelButton: true});
             document.querySelector('.swal2-confirm').addEventListener('click', () => {
+
                let form = new FormData();
                form.append('prop_code', btn.dataset.code);
 
@@ -46,6 +48,7 @@ if(newAgentForm) {
         e.innerHTML = e.textContent = '';
     });
     newAgentForm.addEventListener('submit', (e) => {
+
         e.preventDefault();
         let agentForm = new FormData(newAgentForm);
 
@@ -57,13 +60,13 @@ if(newAgentForm) {
         let xhr = new XMLHttpRequest();
         xhr.open('POST', newAgentForm.getAttribute('action'), true);
 
-
         xhr.addEventListener('readystatechange', () => {
 
-          
             if(xhr.readyState === 4) {
+
                 console.log(xhr.response)
                 const data = JSON.parse(xhr.response);
+
                 if(!data['status']) {
 
                     Object.entries(data['response'][0]).forEach(([key, value]) => {
@@ -77,7 +80,7 @@ if(newAgentForm) {
                       });
                 }
                 else {
-                    Swal.fire({ icon: "success", title: "Registration Successful", text: "Proceed to Login"});
+                    Swal.fire({ icon: "success", title: "Registration Successful", text: "Proceed to Login" });
                     document.querySelector('.swal2-confirm').addEventListener('click', () => window.location.href = '/login');
                 }
               
@@ -150,29 +153,33 @@ if(addLodgeBtn) {
                 }
             }
         });
+
         xhr.send(formData);
+
     });
 }
 
 
 if(logOutBtn) {
     logOutBtn.addEventListener('click', () => {
-        let xhr = new XMLHttpRequest();
 
+        let xhr = new XMLHttpRequest();
         xhr.open('POST', '/logout', true);
 
         let formData = new FormData();
         let token = document.querySelector('meta[name="token"]');
+
         if(token) {
             formData.append('token', token.getAttribute('content'));
         }
+
         xhr.addEventListener('readystatechange', () => {
+
             if(xhr.readyState === 4 && xhr.status == 200) {
                 if(JSON.parse(xhr.response)['status']) {
                     window.location.href = '/';
                 }
-                else {
-
+                else {.
                 }
             }
         });
@@ -235,10 +242,9 @@ if(mainContact) {
                
             }
         });
-    
+
         xhr.send(formData);
     });
-
 }
 
 

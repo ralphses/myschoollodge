@@ -44,6 +44,7 @@ class AgentController extends Controller {
 
         //Validate user inputs
         if(!$this->model->validate()) {
+            
             $agree = $this->model->errors['agent_agree'] ?? false;
             if($agree) {
                 $this->model->errors['agent_agree_check'] = $this->model->errors['agent_agree'];
@@ -54,6 +55,8 @@ class AgentController extends Controller {
             echo json_encode(['status' => false, 'response' => $this->response->getResponseContent()]);
             exit;
         }
+
+    
 
         if(($this->isEmailRegistered($this->model->agent_email))) {
             $this->response->setResponseContent(['agent_email' => 'Email already exist!']);

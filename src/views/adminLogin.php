@@ -26,7 +26,7 @@
 
         <div class="py-[80px] lg:py-[120px]">
             <div class="container">
-                <form action="/login" method="POST" id="login-form">
+                <form action="/admin" method="POST" id="admin-login-form">
                     <div class="grid grid-cols-12 gap-x-[30px] mb-[-30px]">
                         <div class="col-span-12 lg:col-span-6 mb-[30px]">
                             <h2 class="font-recoleta text-primary text-[24px] sm:text-[30px] leading-[1.277] xl:text-xl mb-[15px]">
@@ -62,7 +62,7 @@
                                 <div class="col-span-12">
                                     <div class="flex flex-wrap items-center">
                                         <button type="submit" class="before:rounded-md before:block before:absolute before:left-auto before:right-0 before:inset-y-0 before:-z-[1] before:bg-secondary before:w-0 hover:before:w-full hover:before:left-0 hover:before:right-auto before:transition-all leading-none px-[40px] py-[15px] capitalize font-medium text-white text-[14px] xl:text-[16px] relative after:block after:absolute after:inset-0 after:-z-[2] after:bg-primary after:rounded-md after:transition-all">Login</button>
-                                        <a href="/new-agent" class="font-medium text-primary hover:text-secondary ml-[40px]">Register</a>
+                                        <!-- <a href="/new-agent" class="font-medium text-primary hover:text-secondary ml-[40px]">Register</a> -->
                                     </div>
                                 </div>
                             </div>
